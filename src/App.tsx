@@ -36,6 +36,7 @@ import {
   recordReviewMistake,
   saveProgress,
 } from './lib/storage'
+import { playMoveClick } from './lib/sound'
 import type { RepertoireLine, TrainerMode, TrainingSession } from './types/repertoire'
 
 const firstLine = starterRepertoire[0]
@@ -74,9 +75,11 @@ function App() {
   const [learnIndex, setLearnIndex] = useState(0)
   const [toast, setToast] = useState('')
   const opponentReplyTimer = useRef<number | undefined>(undefined)
+  const soundEnabledRef = useRef(progress.settings.sound)
 
   useEffect(() => {
     saveProgress(progress)
+    soundEnabledRef.current = progress.settings.sound
   }, [progress])
 
   const updateProgress = useCallback((updater: (current: typeof progress) => typeof progress) => {
@@ -105,7 +108,9 @@ function App() {
             current.fen === pendingSession.fen
 
           if (!isStillPending) return current
-          return applyOpponentReply(line, current)
+          const replySession = applyOpponentReply(line, current)
+          void playMoveClick(soundEnabledRef.current)
+          return replySession
         })
         opponentReplyTimer.current = undefined
       }, OPPONENT_REPLY_DELAY_MS)
@@ -199,6 +204,7 @@ function App() {
     setHintLevel(0)
 
     if (result.correct) {
+      void playMoveClick(progress.settings.sound)
       updateProgress((current) => {
         if (mode === 'mistakes' && session.reviewItemId) return recordReviewCorrect(current, session.reviewItemId)
         const markComplete = result.completed && !session.expectedOverrideSan && mode !== 'drill'
@@ -237,6 +243,7 @@ function App() {
 
     setSession(nextSession)
     setHintLevel(0)
+    void playMoveClick(progress.settings.sound)
     updateProgress((current) => {
       if (mode === 'mistakes' && session.reviewItemId) return recordReviewMistake(current, session.reviewItemId)
       return recordMistake(current, selectedLine.id, mistake)
@@ -401,7 +408,11 @@ function App() {
             onFlip={flipBoard}
             onPlayOpponent={() => {
               clearOpponentReplyTimer()
-              setSession((current) => applyOpponentReply(selectedLine, current))
+              setSession((current) => {
+                const replySession = applyOpponentReply(selectedLine, current)
+                void playMoveClick(soundEnabledRef.current)
+                return replySession
+              })
             }}
             onMode={handleMode}
           />

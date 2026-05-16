@@ -19,6 +19,19 @@ describe('storage helpers', () => {
     expect(imported.settings).toMatchObject(defaultSettings)
   })
 
+  it('enables the new move sound when migrating older progress', () => {
+    const imported = importProgressJson(
+      JSON.stringify({
+        ...defaultProgress(),
+        version: 1,
+        settings: { ...defaultSettings, sound: false },
+      }),
+    )
+
+    expect(imported.version).toBe(2)
+    expect(imported.settings.sound).toBe(true)
+  })
+
   it('deduplicates repeated mistakes and raises priority', () => {
     const line = starterRepertoire[0]
     const session = createLineSession(line, 'practice', defaultSettings)

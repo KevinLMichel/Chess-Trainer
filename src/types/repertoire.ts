@@ -81,7 +81,7 @@ export type UserSettings = {
 }
 
 export type StoredProgress = {
-  version: 1
+  version: 2
   score: number
   streak: number
   bestStreak: number

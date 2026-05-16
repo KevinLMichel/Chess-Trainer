@@ -7,14 +7,14 @@ export const defaultSettings: UserSettings = {
   autoPlayOpponent: true,
   showLegalMoves: true,
   showCoordinates: true,
-  sound: false,
+  sound: true,
   hints: true,
   darkMode: true,
   boardTheme: 'warm',
 }
 
 export const defaultProgress = (): StoredProgress => ({
-  version: 1,
+  version: 2,
   score: 0,
   streak: 0,
   bestStreak: 0,
@@ -31,15 +31,20 @@ const hasStorage = () => typeof window !== 'undefined' && typeof window.localSto
 export const normalizeProgress = (value: Partial<StoredProgress> | null | undefined): StoredProgress => {
   const fallback = defaultProgress()
   if (!value || typeof value !== 'object') return fallback
+  const previousVersion = value.version ?? 1
+  const settings = { ...defaultSettings, ...(value.settings ?? {}) }
+  if (previousVersion < 2) {
+    settings.sound = true
+  }
 
   return {
     ...fallback,
     ...value,
-    version: 1,
+    version: 2,
     completedLineIds: Array.isArray(value.completedLineIds) ? value.completedLineIds : [],
     lineStats: value.lineStats && typeof value.lineStats === 'object' ? value.lineStats : {},
     reviewQueue: Array.isArray(value.reviewQueue) ? value.reviewQueue : [],
-    settings: { ...defaultSettings, ...(value.settings ?? {}) },
+    settings,
     userLines: Array.isArray(value.userLines) ? value.userLines : [],
     welcomeDismissed: Boolean(value.welcomeDismissed),
   }
