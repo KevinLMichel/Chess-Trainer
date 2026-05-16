@@ -60,7 +60,11 @@ The app also includes an Add Line screen for local custom lines. Paste SAN or si
 
 ## Deploying
 
-The included workflow builds and deploys to GitHub Pages when `main` is pushed. In the repository settings, set Pages source to GitHub Actions.
+The included workflow builds and deploys to GitHub Pages when `main` is pushed. Before the deployment job can succeed, enable Pages for this repository:
+
+1. Open **Settings > Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Re-run the failed workflow or push another commit.
 
 The Vite base path is `/Chess-Trainer/`, targeting:
 
