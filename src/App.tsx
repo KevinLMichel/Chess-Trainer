@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Plus, Target } from 'lucide-react'
 import { ChessBoard } from './components/ChessBoard'
 import { AddLineForm } from './components/AddLineForm'
@@ -11,13 +11,13 @@ import { TopBar } from './components/TopBar'
 import { TrainingPanel } from './components/TrainingPanel'
 import { starterRepertoire } from './data/repertoire'
 import {
+  advanceForcedMoves,
   attemptMove,
   createLineSession,
   createPositionSession,
   createReviewItem,
   getExpectedMove,
   makePositionTargets,
-  playOpponentReply,
   revealAnswer,
   replayLineToIndex,
   validateLine,
@@ -39,8 +39,26 @@ import {
 import type { RepertoireLine, TrainerMode, TrainingSession } from './types/repertoire'
 
 const firstLine = starterRepertoire[0]
+const OPPONENT_REPLY_DELAY_MS = 1000
 
 const pickRandom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)]
+
+const applyOpponentReply = (line: RepertoireLine, currentSession: TrainingSession) => {
+  const advanced = advanceForcedMoves(line, currentSession, true)
+  const replyText = advanced.replies.length
+    ? `Black replies ${advanced.replies.map((reply) => reply.san).join(', ')}.`
+    : ''
+
+  return {
+    ...advanced.session,
+    feedback:
+      advanced.session.status === 'complete'
+        ? 'Line complete.'
+        : replyText
+          ? `${replyText} What's the best move?`
+          : advanced.session.feedback,
+  }
+}
 
 function App() {
   const [progress, setProgress] = useState(() => loadProgress())
@@ -55,6 +73,7 @@ function App() {
   const [openingFilter, setOpeningFilter] = useState('All openings')
   const [learnIndex, setLearnIndex] = useState(0)
   const [toast, setToast] = useState('')
+  const opponentReplyTimer = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     saveProgress(progress)
@@ -64,8 +83,39 @@ function App() {
     setProgress((current) => normalizeProgress(updater(current)))
   }, [])
 
+  const clearOpponentReplyTimer = useCallback(() => {
+    if (opponentReplyTimer.current) {
+      window.clearTimeout(opponentReplyTimer.current)
+      opponentReplyTimer.current = undefined
+    }
+  }, [])
+
+  useEffect(() => clearOpponentReplyTimer, [clearOpponentReplyTimer])
+
+  const scheduleOpponentReply = useCallback(
+    (line: RepertoireLine, pendingSession: TrainingSession) => {
+      clearOpponentReplyTimer()
+      opponentReplyTimer.current = window.setTimeout(() => {
+        setSession((current) => {
+          const isStillPending =
+            current.id === pendingSession.id &&
+            current.lineId === pendingSession.lineId &&
+            current.status === 'opponent-ready' &&
+            current.moveIndex === pendingSession.moveIndex &&
+            current.fen === pendingSession.fen
+
+          if (!isStillPending) return current
+          return applyOpponentReply(line, current)
+        })
+        opponentReplyTimer.current = undefined
+      }, OPPONENT_REPLY_DELAY_MS)
+    },
+    [clearOpponentReplyTimer],
+  )
+
   const startLine = useCallback(
     (lineId: string, nextMode: Extract<TrainingSession['mode'], 'practice' | 'run'> = 'practice') => {
+      clearOpponentReplyTimer()
       const line = allLines.find((candidate) => candidate.id === lineId) ?? allLines[0]
       setSelectedLineId(line.id)
       setMode(nextMode)
@@ -74,10 +124,11 @@ function App() {
       setSession(createLineSession(line, nextMode, progress.settings))
       updateProgress((current) => ({ ...current, currentLineId: line.id }))
     },
-    [allLines, progress.settings, updateProgress],
+    [allLines, clearOpponentReplyTimer, progress.settings, updateProgress],
   )
 
   const startRandomDrill = useCallback(() => {
+    clearOpponentReplyTimer()
     const targets = makePositionTargets(allLines)
     const target = pickRandom(targets)
     const line = allLines.find((candidate) => candidate.id === target.lineId) ?? allLines[0]
@@ -85,9 +136,10 @@ function App() {
     setMode('drill')
     setHintLevel(0)
     setSession(createPositionSession(target, 'drill'))
-  }, [allLines])
+  }, [allLines, clearOpponentReplyTimer])
 
   const startReview = useCallback(() => {
+    clearOpponentReplyTimer()
     const reviewable = progress.reviewQueue
       .filter((item) => allLines.some((line) => line.id === item.lineId))
       .sort((a, b) => b.priority - a.priority || b.misses - a.misses)
@@ -102,7 +154,7 @@ function App() {
     setMode('mistakes')
     setHintLevel(0)
     setSession(createPositionSession(item, 'mistakes'))
-  }, [allLines, progress.reviewQueue])
+  }, [allLines, clearOpponentReplyTimer, progress.reviewQueue])
 
   const nextLine = useCallback(() => {
     if (mode === 'drill') {
@@ -120,6 +172,7 @@ function App() {
   }, [allLines, mode, selectedLine.id, startLine, startRandomDrill, startReview])
 
   const handleMode = (nextMode: TrainerMode) => {
+    clearOpponentReplyTimer()
     if (nextMode === 'practice') startLine(selectedLine.id, 'practice')
     else if (nextMode === 'learn') {
       setMode('learn')
@@ -132,8 +185,17 @@ function App() {
 
   const handleBoardMove = (from: string, to: string, promotion?: string) => {
     if (mode === 'learn' || session.status === 'complete' || session.status === 'opponent-ready') return
-    const result = attemptMove(selectedLine, session, { from, to, promotion }, progress.settings)
-    setSession(result.session)
+    const shouldDelayOpponent = progress.settings.autoPlayOpponent
+    const attemptSettings = shouldDelayOpponent
+      ? { ...progress.settings, autoPlayOpponent: false }
+      : progress.settings
+    const result = attemptMove(selectedLine, session, { from, to, promotion }, attemptSettings)
+    const nextSession =
+      shouldDelayOpponent && result.correct && result.session.status === 'opponent-ready'
+        ? { ...result.session, feedback: 'Correct. Black is thinking...' }
+        : result.session
+
+    setSession(nextSession)
     setHintLevel(0)
 
     if (result.correct) {
@@ -147,6 +209,10 @@ function App() {
     } else if (result.mistake) {
       updateProgress((current) => recordMistake(current, selectedLine.id, result.mistake!))
     }
+
+    if (shouldDelayOpponent && result.correct && nextSession.status === 'opponent-ready') {
+      scheduleOpponentReply(selectedLine, nextSession)
+    }
   }
 
   const showHint = () => {
@@ -155,16 +221,30 @@ function App() {
   }
 
   const showAnswer = () => {
+    clearOpponentReplyTimer()
     const expected = getExpectedMove(selectedLine, session)
     if (!expected || session.status === 'complete') return
     const expectedSan = expected.san
     const mistake = createReviewItem(selectedLine, session, expectedSan)
-    setSession(revealAnswer(selectedLine, session, progress.settings))
+    const answerSettings = progress.settings.autoPlayOpponent
+      ? { ...progress.settings, autoPlayOpponent: false }
+      : progress.settings
+    const answerSession = revealAnswer(selectedLine, session, answerSettings)
+    const nextSession =
+      progress.settings.autoPlayOpponent && answerSession.status === 'opponent-ready'
+        ? { ...answerSession, feedback: `Best move: ${expectedSan}. Black is thinking...` }
+        : answerSession
+
+    setSession(nextSession)
     setHintLevel(0)
     updateProgress((current) => {
       if (mode === 'mistakes' && session.reviewItemId) return recordReviewMistake(current, session.reviewItemId)
       return recordMistake(current, selectedLine.id, mistake)
     })
+
+    if (progress.settings.autoPlayOpponent && nextSession.status === 'opponent-ready') {
+      scheduleOpponentReply(selectedLine, nextSession)
+    }
   }
 
   const flipBoard = () => {
@@ -319,7 +399,10 @@ function App() {
             onNext={nextLine}
             onReview={startReview}
             onFlip={flipBoard}
-            onPlayOpponent={() => setSession(playOpponentReply(selectedLine, session))}
+            onPlayOpponent={() => {
+              clearOpponentReplyTimer()
+              setSession((current) => applyOpponentReply(selectedLine, current))
+            }}
             onMode={handleMode}
           />
         )}
