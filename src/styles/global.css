@@ -84,9 +84,10 @@ textarea {
 }
 
 .app-shell {
-  width: min(1500px, calc(100% - 32px));
+  width: min(1320px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 22px 0 42px;
+  padding: 14px 0 28px;
+  --study-board-size: clamp(380px, calc(100vh - 260px), 660px);
 }
 
 .top-bar {
@@ -94,7 +95,7 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .brand {
@@ -104,8 +105,8 @@ textarea {
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   display: grid;
   place-items: center;
@@ -126,7 +127,7 @@ textarea {
 }
 
 .brand h1 {
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: clamp(1.18rem, 1.8vw, 1.55rem);
 }
 
 .brand p,
@@ -148,7 +149,7 @@ textarea {
 
 .top-stats span {
   min-width: 82px;
-  min-height: 44px;
+  min-height: 40px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
@@ -169,7 +170,7 @@ textarea {
 }
 
 .progress-region {
-  margin: 0 auto 18px;
+  margin: 0 auto 12px;
   width: min(1120px, 100%);
 }
 
@@ -225,7 +226,7 @@ textarea {
   gap: 8px;
   border-radius: 8px;
   padding: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .app-nav button.active,
@@ -239,14 +240,17 @@ textarea {
 
 .trainer-layout {
   display: grid;
-  grid-template-columns: minmax(420px, 740px) minmax(360px, 430px);
-  gap: 20px;
+  grid-template-columns: var(--study-board-size) minmax(340px, 420px);
+  gap: 18px;
   justify-content: center;
   align-items: start;
 }
 
 .board-wrap {
-  width: min(100%, 740px);
+  width: var(--study-board-size);
+  height: var(--study-board-size);
+  max-width: 660px;
+  aspect-ratio: 1 / 1;
   align-self: start;
 }
 
@@ -254,7 +258,10 @@ textarea {
   position: relative;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  aspect-ratio: 1;
+  grid-template-rows: repeat(8, 1fr);
+  aspect-ratio: 1 / 1;
+  width: var(--study-board-size);
+  height: var(--study-board-size);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -264,8 +271,12 @@ textarea {
 
 .board-square {
   position: relative;
+  display: grid;
+  place-items: center;
   min-width: 0;
   min-height: 0;
+  width: 100%;
+  height: 100%;
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -393,8 +404,11 @@ textarea {
 
 .training-panel {
   border-radius: 8px;
-  padding: 20px;
-  min-height: 620px;
+  padding: 16px;
+  max-height: var(--study-board-size);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
 }
 
 .panel-header,
@@ -435,10 +449,10 @@ textarea {
 .explanation-card,
 .hint-box,
 .completion-card {
-  margin-top: 16px;
+  margin-top: 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 16px;
+  padding: 14px;
   background: var(--panel-elevated);
 }
 
@@ -476,7 +490,11 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
+}
+
+.action-grid button {
+  min-height: 38px;
 }
 
 .action-grid button,
@@ -485,7 +503,7 @@ textarea {
 }
 
 .panel-section {
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .section-heading h3 {
@@ -494,10 +512,10 @@ textarea {
 
 .move-list {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   padding: 0;
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .move-list li {
@@ -513,7 +531,7 @@ textarea {
 }
 
 .move-pill {
-  min-height: 30px;
+  min-height: 28px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -533,7 +551,7 @@ textarea {
 }
 
 .mode-tile {
-  min-height: 74px;
+  min-height: 58px;
   flex-direction: column;
   gap: 4px;
 }
@@ -679,6 +697,7 @@ textarea {
   .app-shell {
     width: min(100% - 20px, 820px);
     padding-top: 12px;
+    --study-board-size: min(720px, calc(100vw - 20px));
   }
 
   .top-bar,
@@ -697,12 +716,13 @@ textarea {
   }
 
   .board-wrap {
-    width: min(100%, 720px);
+    width: var(--study-board-size);
+    height: var(--study-board-size);
     margin: 0 auto;
   }
 
   .training-panel {
-    min-height: 0;
+    max-height: none;
   }
 }
 
