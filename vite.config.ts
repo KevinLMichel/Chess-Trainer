@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'pwa-icon.svg', 'pieces/*.svg'],
+      includeAssets: ['favicon.svg', 'pwa-icon.svg', 'pwa-192.png', 'pwa-512.png', 'pieces/*.svg'],
       manifest: {
         name: "Queen's Gambit Trainer",
         short_name: 'QG Trainer',
@@ -20,6 +20,24 @@ export default defineConfig({
         scope: '/Chess-Trainer/',
         start_url: '/Chess-Trainer/',
         icons: [
+          {
+            src: 'pwa-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'pwa-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'pwa-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
           {
             src: 'pwa-icon.svg',
             sizes: '512x512',
