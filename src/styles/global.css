@@ -529,6 +529,8 @@ textarea {
 .tag-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
   gap: 6px;
   margin-top: 12px;
 }
@@ -536,6 +538,7 @@ textarea {
 .tag-row span,
 .line-metrics span,
 .review-metrics span {
+  align-self: flex-start;
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 5px 9px;
@@ -820,6 +823,8 @@ textarea {
 .review-metrics {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
   gap: 8px;
   margin: 12px 0;
 }
@@ -975,6 +980,7 @@ textarea {
 .line-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: start;
   gap: 12px;
   margin-top: 16px;
 }
@@ -993,6 +999,7 @@ textarea {
 
 .compact-line-card {
   display: grid;
+  align-content: start;
   gap: 10px;
   padding: 14px;
 }
