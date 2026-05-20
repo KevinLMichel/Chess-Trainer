@@ -5,6 +5,10 @@ import { defaultSettings } from './storage'
 import { attemptMove, createLineSession, getExpectedMove, validateLine } from './trainerEngine'
 
 describe('trainerEngine', () => {
+  it('ships a 16-line starter repertoire', () => {
+    expect(starterRepertoire).toHaveLength(16)
+  })
+
   it('validates every starter line', () => {
     for (const line of starterRepertoire) {
       expect(validateLine(line), line.title).toMatchObject({ valid: true, errors: [] })

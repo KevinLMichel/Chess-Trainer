@@ -1,5 +1,6 @@
 import type { LineStats, RepertoireLine } from '../types/repertoire'
 import { lineAccuracy } from '../lib/storage'
+import { StepForward } from 'lucide-react'
 
 type CompletionCardProps = {
   line: RepertoireLine
@@ -29,11 +30,12 @@ export function CompletionCard({ line, stats, onRestart, onNext, onReview }: Com
         </span>
       </div>
       <div className="button-row">
+        <button className="primary-next completion-next" type="button" onClick={onNext}>
+          <StepForward size={18} />
+          Next line
+        </button>
         <button type="button" onClick={onRestart}>
           Practice again
-        </button>
-        <button type="button" onClick={onNext}>
-          Next line
         </button>
         <button type="button" onClick={onReview}>
           Review mistakes

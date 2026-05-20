@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Plus, Target } from 'lucide-react'
+import { Maximize2, Minimize2, Plus, RotateCcw, Settings, StepForward, SwitchCamera, Target } from 'lucide-react'
 import { ChessBoard } from './components/ChessBoard'
 import { AddLineForm } from './components/AddLineForm'
 import { LearningPanel } from './components/LearningPanel'
@@ -74,6 +74,7 @@ function App() {
   const [openingFilter, setOpeningFilter] = useState('All openings')
   const [learnIndex, setLearnIndex] = useState(0)
   const [toast, setToast] = useState('')
+  const [focusMode, setFocusMode] = useState(false)
   const opponentReplyTimer = useRef<number | undefined>(undefined)
   const soundEnabledRef = useRef(progress.settings.sound)
 
@@ -338,7 +339,7 @@ function App() {
   const currentProgressMax = mode === 'learn' ? selectedLine.moves.length : session.totalTrainableMoves
 
   return (
-    <div className="app-shell">
+    <div className={focusMode ? 'app-shell focus-mode' : 'app-shell'}>
       <TopBar progress={progress} onSettings={() => setMode('settings')} />
       <ProgressBar value={currentProgressValue} max={currentProgressMax} label={currentProgressLabel} />
 
@@ -400,6 +401,7 @@ function App() {
             progress={progress}
             hintLevel={hintLevel}
             lineStats={lineStats}
+            compact={focusMode}
             onHint={showHint}
             onShowAnswer={showAnswer}
             onRestart={() => startLine(selectedLine.id, mode === 'run' ? 'run' : 'practice')}
@@ -418,6 +420,28 @@ function App() {
           />
         )}
       </main>
+
+      {focusMode ? (
+        <div className="focus-controls" aria-label="Focus practice controls">
+          <button className="icon-button" type="button" onClick={() => setMode('settings')} aria-label="Open settings">
+            <Settings size={19} />
+          </button>
+          <button type="button" onClick={() => startLine(selectedLine.id, mode === 'run' ? 'run' : 'practice')}>
+            <RotateCcw size={18} />
+            Restart
+          </button>
+          <button className="primary-next focus-next" type="button" onClick={nextLine}>
+            <StepForward size={19} />
+            Next Line
+          </button>
+          <button className="mode-control" type="button" onClick={() => setMode('repertoire')}>
+            Mode
+          </button>
+          <button className="icon-button" type="button" onClick={flipBoard} aria-label="Flip board">
+            <SwitchCamera size={19} />
+          </button>
+        </div>
+      ) : null}
 
       {mode === 'repertoire' ? (
         <RepertoireBrowser
@@ -467,6 +491,14 @@ function App() {
           {toast}
         </button>
       ) : null}
+      <button
+        className="focus-toggle"
+        type="button"
+        onClick={() => setFocusMode((value) => !value)}
+        aria-label={focusMode ? 'Exit focus board mode' : 'Enter focus board mode'}
+      >
+        {focusMode ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+      </button>
     </div>
   )
 }

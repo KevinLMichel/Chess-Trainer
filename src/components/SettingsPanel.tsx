@@ -70,7 +70,7 @@ export function SettingsPanel({
         <label>
           Board theme
           <select value={settings.boardTheme} onChange={(event) => update('boardTheme', event.target.value as BoardTheme)}>
-            <option value="warm">Warm study</option>
+            <option value="warm">Classic study</option>
             <option value="blue">Modern blue</option>
             <option value="minimal">Minimal</option>
           </select>

@@ -6,7 +6,8 @@ A polished, offline-first chess opening trainer for practicing Queen's Gambit li
 
 - Custom React chessboard with bundled SVG pieces, click-to-move, drag-to-move, board coordinates, legal move dots, and last/correct/wrong move highlights.
 - `chess.js`-powered legal move validation, SAN parsing, FEN handling, and safe expected-move comparison.
-- Five starter lines covering Queen's Gambit Accepted, Queen's Gambit Declined, and Slav Defense structures.
+- Sixteen starter lines covering Queen's Gambit Accepted, Queen's Gambit Declined, Slav, Semi-Slav, Albin, and Chigorin structures.
+- Focus Board mode enlarges the board and keeps the main practice controls in a compact bottom rail.
 - Practice, Learn, Random Drill, Mistake Review, Full Repertoire Run, Repertoire Browser, Add Line, and Settings views.
 - Local progress tracking for score, streaks, best streak, completed lines, per-line accuracy, mistakes, review queue, settings, and custom lines.
 - JSON import/export for progress and repertoire, plus a scaffolded PGN/SAN importer for user-created lines.

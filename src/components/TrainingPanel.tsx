@@ -13,6 +13,7 @@ type TrainingPanelProps = {
   progress: StoredProgress
   hintLevel: number
   lineStats?: LineStats
+  compact?: boolean
   onHint: () => void
   onShowAnswer: () => void
   onRestart: () => void
@@ -30,6 +31,7 @@ export function TrainingPanel({
   progress,
   hintLevel,
   lineStats,
+  compact = false,
   onHint,
   onShowAnswer,
   onRestart,
@@ -49,7 +51,7 @@ export function TrainingPanel({
         : 'neutral'
 
   return (
-    <aside className="training-panel">
+    <aside className={compact ? 'training-panel compact-panel' : 'training-panel'}>
       <div className="panel-header">
         <span className="eyebrow">{mode === 'mistakes' ? 'Mistake Review' : mode === 'drill' ? 'Drill' : 'Practice'}</span>
         <h2>{line.opening}</h2>
@@ -96,9 +98,9 @@ export function TrainingPanel({
             <RotateCcw size={18} />
             Restart
           </button>
-          <button type="button" onClick={onNext}>
+          <button className="primary-next action-next" type="button" onClick={onNext}>
             <StepForward size={18} />
-            Next
+            Next Line
           </button>
           <button type="button" onClick={onReview}>
             <Repeat size={18} />
@@ -112,7 +114,7 @@ export function TrainingPanel({
       )}
 
       <MoveList line={line} session={session} />
-      <ModeTiles activeMode={mode} reviewCount={progress.reviewQueue.length} onMode={onMode} />
+      {compact ? null : <ModeTiles activeMode={mode} reviewCount={progress.reviewQueue.length} onMode={onMode} />}
     </aside>
   )
 }
