@@ -320,6 +320,9 @@ function App() {
   const learnFen = useMemo(() => replayLineToIndex(selectedLine, learnIndex).chess.fen(), [learnIndex, selectedLine])
   const boardFen = mode === 'learn' ? learnFen : session.fen
   const lineStats = progress.lineStats[selectedLine.id]
+  const selectedLineIndex = allLines.findIndex((line) => line.id === selectedLine.id)
+  const selectedLineNumber = selectedLineIndex >= 0 ? selectedLineIndex + 1 : 1
+  const usesCompactPracticeChrome = mode === 'practice' || mode === 'drill' || mode === 'mistakes' || mode === 'run'
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -341,7 +344,7 @@ function App() {
   return (
     <div className={focusMode ? 'app-shell focus-mode' : 'app-shell'}>
       <TopBar progress={progress} onSettings={() => setMode('settings')} />
-      <ProgressBar value={currentProgressValue} max={currentProgressMax} label={currentProgressLabel} />
+      {mode === 'learn' ? <ProgressBar value={currentProgressValue} max={currentProgressMax} label={currentProgressLabel} /> : null}
 
       {!progress.welcomeDismissed ? (
         <div className="welcome-card">
@@ -355,7 +358,7 @@ function App() {
         </div>
       ) : null}
 
-      <nav className="app-nav" aria-label="Primary sections">
+      <nav className={usesCompactPracticeChrome ? 'app-nav app-nav-compact' : 'app-nav'} aria-label="Primary sections">
         <button className={mode === 'practice' ? 'active' : ''} type="button" onClick={() => startLine(selectedLine.id, 'practice')}>
           <Target size={16} />
           Practice
@@ -402,6 +405,8 @@ function App() {
             hintLevel={hintLevel}
             lineStats={lineStats}
             compact={focusMode}
+            lineNumber={selectedLineNumber}
+            lineTotal={allLines.length}
             onHint={showHint}
             onShowAnswer={showAnswer}
             onRestart={() => startLine(selectedLine.id, mode === 'run' ? 'run' : 'practice')}

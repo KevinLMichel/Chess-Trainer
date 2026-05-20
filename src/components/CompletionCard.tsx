@@ -14,7 +14,8 @@ export function CompletionCard({ line, stats, onRestart, onNext, onReview }: Com
   return (
     <div className="completion-card">
       <span className="eyebrow">Line complete</span>
-      <h3>{line.title}</h3>
+      <h3>Nice work.</h3>
+      <p>{line.title}</p>
       <div className="completion-stats">
         <span>
           <strong>{lineAccuracy(stats)}%</strong>

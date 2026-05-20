@@ -13,7 +13,7 @@ export function LearningPanel({ line, moveIndex, onPrev, onNext, onPractice }: L
   const currentMove = moveIndex > 0 ? line.moves[moveIndex - 1] : undefined
 
   return (
-    <aside className="training-panel">
+    <aside className="learning-panel">
       <div className="panel-header">
         <span className="eyebrow">Learn</span>
         <h2>{line.opening}</h2>
