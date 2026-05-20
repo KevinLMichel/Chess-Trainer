@@ -131,21 +131,21 @@ export function RepertoireBrowser({
           const hiddenTags = line.tags.filter((item) => item !== 'quickstart').length - visibleTags.length
           return (
             <article key={line.id} className={line.id === selectedLineId ? 'line-card selected compact-line-card' : 'line-card compact-line-card'}>
-              <div>
+              <div className="line-card-main">
                 <span className="eyebrow">
                   {lineChapter(line)} - {lineDifficulty(line)}
                 </span>
                 <h3>{line.title}</h3>
-                <p>{lineSummary(line)}</p>
+                <p className="line-card-summary">{lineSummary(line)}</p>
               </div>
-              <div className="tag-row">
+              <div className="tag-row line-card-tags">
                 {line.eco ? <span>{line.eco}</span> : null}
                 {visibleTags.map((item) => (
                   <span key={item}>{item}</span>
                 ))}
                 {hiddenTags > 0 ? <span>+{hiddenTags}</span> : null}
               </div>
-              <div className="line-metrics">
+              <div className="line-metrics line-card-metrics">
                 <span>{completionLabel(progress.completedLineIds, line.id)}</span>
                 <span>Accuracy {accuracyLabel(stats)}</span>
                 <span>{stats?.mistakes ?? 0} mistakes</span>
@@ -162,7 +162,7 @@ export function RepertoireBrowser({
                 </ul>
                 <p>{line.moves.map((move) => move.san).join(' ')}</p>
               </details>
-              <div className="button-row">
+              <div className="button-row line-card-actions">
                 <button type="button" onClick={() => onSelectLine(line.id)}>
                   Select
                 </button>

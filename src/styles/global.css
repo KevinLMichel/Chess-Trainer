@@ -999,18 +999,53 @@ textarea {
 
 .compact-line-card {
   display: grid;
+  grid-template-rows: minmax(120px, auto) minmax(64px, auto) minmax(64px, auto) auto 1fr auto;
   align-content: start;
   gap: 10px;
+  min-height: 448px;
   padding: 14px;
 }
 
+.line-card-main {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-height: 120px;
+}
+
 .compact-line-card h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   font-size: 1rem;
 }
 
-.compact-line-card p {
+.line-card-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   font-size: 0.86rem;
   line-height: 1.4;
+}
+
+.line-card-tags,
+.line-card-metrics {
+  min-height: 64px;
+}
+
+.line-card-tags {
+  margin-top: 0;
+}
+
+.line-card-metrics {
+  margin: 0;
+}
+
+.line-card-actions {
+  align-self: end;
+  margin-top: 0;
 }
 
 .line-card.selected {
