@@ -5,13 +5,22 @@ import { defaultSettings } from './storage'
 import { attemptMove, createLineSession, getExpectedMove, validateLine } from './trainerEngine'
 
 describe('trainerEngine', () => {
-  it('ships a 16-line starter repertoire', () => {
-    expect(starterRepertoire).toHaveLength(16)
+  it('ships a 32-line starter repertoire', () => {
+    expect(starterRepertoire).toHaveLength(32)
   })
 
   it('validates every starter line', () => {
     for (const line of starterRepertoire) {
       expect(validateLine(line), line.title).toMatchObject({ valid: true, errors: [] })
+    }
+  })
+
+  it('includes theory ideas and coach notes for starter training moves', () => {
+    for (const line of starterRepertoire) {
+      expect(line.ideas?.length, `${line.title} needs theory ideas`).toBeGreaterThanOrEqual(2)
+      for (const move of line.moves.filter((candidate) => candidate.train)) {
+        expect(move.note?.trim(), `${line.title} ${move.san} needs a coach note`).toBeTruthy()
+      }
     }
   })
 

@@ -29,6 +29,7 @@ export type RepertoireLine = {
   startingFen: 'startpos' | string
   tags: string[]
   moves: RepertoireMove[]
+  ideas?: string[]
   source?: 'starter' | 'user'
 }
 
