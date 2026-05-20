@@ -13,9 +13,9 @@ export default defineConfig({
       manifest: {
         name: "Queen's Gambit Trainer",
         short_name: 'QG Trainer',
-        description: "Offline-first Queen's Gambit opening practice.",
-        theme_color: '#08090d',
-        background_color: '#08090d',
+        description: "Offline-first Queen's Gambit opening practice for QGA, QGD, Slav, and related repertoire lines.",
+        theme_color: '#041a38',
+        background_color: '#041a38',
         display: 'standalone',
         scope: '/Chess-Trainer/',
         start_url: '/Chess-Trainer/',

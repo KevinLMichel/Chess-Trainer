@@ -2,6 +2,8 @@
 
 A polished, offline-first chess opening trainer for practicing Queen's Gambit lines as White. It runs entirely in the browser, stores progress locally on the device, and deploys as a static GitHub Pages site.
 
+Live app: https://kevinlmichel.github.io/Chess-Trainer/
+
 ## Features
 
 - Custom React chessboard with bundled SVG pieces, click-to-move, drag-to-move, board coordinates, legal move dots, and last/correct/wrong move highlights.
@@ -76,6 +78,10 @@ https://KevinLMichel.github.io/Chess-Trainer/
 ## Privacy
 
 No backend, accounts, analytics, engine calls, cloud sync, or external runtime assets are used. Practice data stays in `localStorage` on the current device unless exported manually.
+
+## Discoverability
+
+The public GitHub Pages app is intentionally indexable. The site includes metadata, a `robots.txt` file, and a sitemap for search engines while remaining local-only and tracker-free at runtime.
 
 ## Asset Attribution
 
