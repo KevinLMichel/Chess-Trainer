@@ -5,8 +5,13 @@ import { defaultSettings } from './storage'
 import { attemptMove, createLineSession, getExpectedMove, validateLine } from './trainerEngine'
 
 describe('trainerEngine', () => {
-  it('ships a 32-line starter repertoire', () => {
-    expect(starterRepertoire).toHaveLength(32)
+  it('ships an 80-line starter repertoire', () => {
+    expect(starterRepertoire).toHaveLength(80)
+  })
+
+  it('uses unique ids and ordered study numbers for every starter line', () => {
+    expect(new Set(starterRepertoire.map((line) => line.id)).size).toBe(starterRepertoire.length)
+    expect(starterRepertoire.map((line) => line.studyOrder)).toEqual(Array.from({ length: 80 }, (_, index) => index + 1))
   })
 
   it('validates every starter line', () => {
@@ -15,8 +20,11 @@ describe('trainerEngine', () => {
     }
   })
 
-  it('includes theory ideas and coach notes for starter training moves', () => {
+  it('includes metadata, theory ideas, and coach notes for starter training moves', () => {
     for (const line of starterRepertoire) {
+      expect(line.chapter, `${line.title} needs a chapter`).toBeTruthy()
+      expect(line.difficulty, `${line.title} needs a difficulty`).toBeTruthy()
+      expect(line.summary?.trim(), `${line.title} needs a summary`).toBeTruthy()
       expect(line.ideas?.length, `${line.title} needs theory ideas`).toBeGreaterThanOrEqual(2)
       for (const move of line.moves.filter((candidate) => candidate.train)) {
         expect(move.note?.trim(), `${line.title} ${move.san} needs a coach note`).toBeTruthy()

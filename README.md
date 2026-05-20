@@ -8,8 +8,9 @@ Live app: https://kevinlmichel.github.io/Chess-Trainer/
 
 - Custom React chessboard with bundled SVG pieces, click-to-move, drag-to-move, board coordinates, legal move dots, and last/correct/wrong move highlights.
 - `chess.js`-powered legal move validation, SAN parsing, FEN handling, and safe expected-move comparison.
-- Thirty-two starter lines covering Queen's Gambit Accepted, Queen's Gambit Declined, Slav, Semi-Slav, Albin, and Chigorin structures.
-- Line-level theory ideas and move notes explain the plans behind the repertoire.
+- Eighty starter lines covering Queen's Gambit Accepted, Queen's Gambit Declined, Slav, Semi-Slav, Albin, Chigorin, Baltic, Marshall, Austrian, and symmetrical structures.
+- A chaptered repertoire browser with Quickstart, QGA, QGD, Slav, Semi-Slav, Sidelines, and User Lines sections.
+- Line-level summaries, theory ideas, and move notes explain the plans behind the repertoire.
 - Focus Board mode enlarges the board and keeps the main practice controls in a compact bottom rail.
 - Practice, Learn, Random Drill, Mistake Review, Full Repertoire Run, Repertoire Browser, Add Line, and Settings views.
 - Local progress tracking for score, streaks, best streak, completed lines, per-line accuracy, mistakes, review queue, settings, and custom lines.
@@ -41,7 +42,7 @@ npm.cmd run build
 
 ## Adding Repertoire Lines
 
-Starter lines live in `src/data/repertoire.ts`. Add new lines as structured data:
+Starter lines are split by chapter under `src/data/chapters/` and re-exported from `src/data/repertoire.ts`. Add new built-in lines as structured data:
 
 ```ts
 {
@@ -49,9 +50,14 @@ Starter lines live in `src/data/repertoire.ts`. Add new lines as structured data
   title: 'QGA Example',
   opening: "Queen's Gambit Accepted",
   eco: 'D20',
+  chapter: 'QGA',
+  difficulty: 'beginner',
+  studyOrder: 81,
+  summary: 'White builds a center and recovers c4 after developing.',
   trainAs: 'white',
   startingFen: 'startpos',
   tags: ['QGA', 'beginner'],
+  ideas: ['Develop before recovering c4.', 'Use the center as compensation.'],
   moves: [
     { san: 'd4', side: 'white', train: true, note: 'White takes space.' },
     { san: 'd5', side: 'black', train: false },

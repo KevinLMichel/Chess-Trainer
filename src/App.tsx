@@ -37,6 +37,7 @@ import {
   saveProgress,
 } from './lib/storage'
 import { playMoveClick } from './lib/sound'
+import { getNextLineInChapter, lineChapter, linesForChapter, sortByStudyOrder } from './lib/repertoire'
 import type { RepertoireLine, TrainerMode, TrainingSession } from './types/repertoire'
 
 const firstLine = starterRepertoire[0]
@@ -63,7 +64,7 @@ const applyOpponentReply = (line: RepertoireLine, currentSession: TrainingSessio
 
 function App() {
   const [progress, setProgress] = useState(() => loadProgress())
-  const allLines = useMemo(() => [...starterRepertoire, ...progress.userLines], [progress.userLines])
+  const allLines = useMemo(() => sortByStudyOrder([...starterRepertoire, ...progress.userLines]), [progress.userLines])
   const [selectedLineId, setSelectedLineId] = useState(progress.currentLineId ?? firstLine.id)
   const selectedLine = allLines.find((line) => line.id === selectedLineId) ?? allLines[0]
   const [mode, setMode] = useState<TrainerMode>('practice')
@@ -71,7 +72,6 @@ function App() {
     createLineSession(selectedLine ?? firstLine, 'practice', progress.settings),
   )
   const [hintLevel, setHintLevel] = useState(0)
-  const [openingFilter, setOpeningFilter] = useState('All openings')
   const [learnIndex, setLearnIndex] = useState(0)
   const [toast, setToast] = useState('')
   const [focusMode, setFocusMode] = useState(false)
@@ -172,8 +172,9 @@ function App() {
       return
     }
 
-    const currentIndex = allLines.findIndex((line) => line.id === selectedLine.id)
-    const next = allLines[(currentIndex + 1) % allLines.length]
+    const orderedLines = sortByStudyOrder(allLines)
+    const currentIndex = orderedLines.findIndex((line) => line.id === selectedLine.id)
+    const next = mode === 'run' ? orderedLines[(currentIndex + 1) % orderedLines.length] : getNextLineInChapter(allLines, selectedLine.id)
     startLine(next.id, mode === 'run' ? 'run' : 'practice')
   }, [allLines, mode, selectedLine.id, startLine, startRandomDrill, startReview])
 
@@ -185,7 +186,7 @@ function App() {
       setLearnIndex(0)
     } else if (nextMode === 'drill') startRandomDrill()
     else if (nextMode === 'mistakes') startReview()
-    else if (nextMode === 'run') startLine(allLines[0].id, 'run')
+    else if (nextMode === 'run') startLine(sortByStudyOrder(allLines)[0].id, 'run')
     else setMode(nextMode)
   }
 
@@ -320,7 +321,8 @@ function App() {
   const learnFen = useMemo(() => replayLineToIndex(selectedLine, learnIndex).chess.fen(), [learnIndex, selectedLine])
   const boardFen = mode === 'learn' ? learnFen : session.fen
   const lineStats = progress.lineStats[selectedLine.id]
-  const selectedLineIndex = allLines.findIndex((line) => line.id === selectedLine.id)
+  const selectedChapterLines = linesForChapter(allLines, lineChapter(selectedLine))
+  const selectedLineIndex = selectedChapterLines.findIndex((line) => line.id === selectedLine.id)
   const selectedLineNumber = selectedLineIndex >= 0 ? selectedLineIndex + 1 : 1
   const usesCompactPracticeChrome = mode === 'practice' || mode === 'drill' || mode === 'mistakes' || mode === 'run'
 
@@ -406,7 +408,7 @@ function App() {
             lineStats={lineStats}
             compact={focusMode}
             lineNumber={selectedLineNumber}
-            lineTotal={allLines.length}
+            lineTotal={selectedChapterLines.length}
             onHint={showHint}
             onShowAnswer={showAnswer}
             onRestart={() => startLine(selectedLine.id, mode === 'run' ? 'run' : 'practice')}
@@ -453,8 +455,6 @@ function App() {
           lines={allLines}
           progress={progress}
           selectedLineId={selectedLine.id}
-          openingFilter={openingFilter}
-          onOpeningFilter={setOpeningFilter}
           onSelectLine={(lineId) => {
             setSelectedLineId(lineId)
             updateProgress((current) => ({ ...current, currentLineId: lineId }))

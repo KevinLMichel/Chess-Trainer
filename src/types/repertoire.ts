@@ -12,6 +12,8 @@ export type TrainerMode =
 
 export type BoardOrientation = 'white' | 'black'
 export type BoardTheme = 'warm' | 'blue' | 'minimal'
+export type RepertoireChapter = 'QGA' | 'QGD' | 'Slav' | 'Semi-Slav' | 'Sidelines' | 'User Lines'
+export type RepertoireDifficulty = 'beginner' | 'club' | 'advanced'
 
 export type RepertoireMove = {
   san: string
@@ -25,6 +27,10 @@ export type RepertoireLine = {
   title: string
   opening: string
   eco?: string
+  chapter?: RepertoireChapter
+  difficulty?: RepertoireDifficulty
+  studyOrder?: number
+  summary?: string
   trainAs: Side
   startingFen: 'startpos' | string
   tags: string[]

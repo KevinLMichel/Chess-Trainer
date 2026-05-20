@@ -1,6 +1,7 @@
 import { ChevronDown, Eye, HelpCircle, Repeat, RotateCcw, StepForward, SwitchCamera } from 'lucide-react'
 import { getExpectedMove } from '../lib/trainerEngine'
 import { lineAccuracy } from '../lib/storage'
+import { lineChapter, lineDifficulty, lineSummary } from '../lib/repertoire'
 import type { LineStats, RepertoireLine, StoredProgress, TrainerMode, TrainingSession } from '../types/repertoire'
 import { CompletionCard } from './CompletionCard'
 import { HintBox } from './HintBox'
@@ -82,7 +83,9 @@ export function TrainingPanel({
         <div className="session-strip">
           <span className="eyebrow">{modeLabel}</span>
           <strong>{line.title}</strong>
-          <span>{line.eco ?? line.opening}</span>
+          <span>
+            {lineChapter(line)} - {lineDifficulty(line)}
+          </span>
           <span>
             Line {lineNumber}/{lineTotal}
           </span>
@@ -195,6 +198,11 @@ export function TrainingPanel({
             <ChevronDown size={16} />
           </summary>
           <p>{line.opening}</p>
+          <p>{lineSummary(line)}</p>
+          <p>
+            {lineChapter(line)} - {lineDifficulty(line)}
+            {line.eco ? ` - ${line.eco}` : ''}
+          </p>
           <div className="tag-row compact-tags">
             {line.eco ? <span>{line.eco}</span> : null}
             {visibleTags.map((tag) => (
@@ -208,6 +216,13 @@ export function TrainingPanel({
                 <span key={tag}>{tag}</span>
               ))}
             </div>
+          ) : null}
+          {line.ideas?.length ? (
+            <ul>
+              {line.ideas.map((idea) => (
+                <li key={idea}>{idea}</li>
+              ))}
+            </ul>
           ) : null}
         </details>
         {compact ? null : (

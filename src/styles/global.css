@@ -865,11 +865,122 @@ textarea {
   min-width: min(100%, 280px);
 }
 
+.repertoire-library {
+  padding: 16px;
+}
+
+.repertoire-library .drawer-header p {
+  max-width: 620px;
+  font-size: 0.9rem;
+}
+
+.search-control {
+  flex: 0 1 360px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #07172a;
+  padding: 0 10px;
+  color: var(--muted);
+}
+
+.search-control input {
+  border: 0;
+  min-height: 40px;
+  padding: 0;
+  background: transparent;
+}
+
+.chapter-tabs {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.chapter-tab {
+  min-height: 54px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(216, 231, 238, 0.045);
+}
+
+.chapter-tab span {
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.chapter-tab small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.chapter-tab.active {
+  background: rgba(151, 212, 241, 0.16);
+  border-color: rgba(151, 212, 241, 0.58);
+}
+
+.library-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 240px)) minmax(180px, auto);
+  gap: 10px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.library-controls label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.library-controls select {
+  min-height: 40px;
+  padding: 8px 10px;
+}
+
+.library-toggle {
+  min-height: 40px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.chapter-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chapter-summary span {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: rgba(216, 231, 238, 0.045);
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.chapter-summary strong {
+  display: block;
+  color: var(--text);
+  font-size: 1rem;
+}
+
 .line-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 12px;
   margin-top: 16px;
+}
+
+.compact-line-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .line-card,
@@ -880,8 +991,68 @@ textarea {
   padding: 16px;
 }
 
+.compact-line-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.compact-line-card h3 {
+  font-size: 1rem;
+}
+
+.compact-line-card p {
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
 .line-card.selected {
   border-color: rgba(151, 212, 241, 0.58);
+}
+
+.line-details {
+  border: 1px solid rgba(216, 231, 238, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(4, 26, 56, 0.36);
+}
+
+.line-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.line-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.line-details summary svg {
+  transition: transform 150ms ease;
+}
+
+.line-details[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.line-details ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.line-details p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .review-list {
@@ -1101,6 +1272,29 @@ textarea {
     width: min(100% - 18px, 760px);
     max-width: none;
   }
+
+  .drawer-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chapter-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .chapter-tab {
+    min-width: 128px;
+  }
+
+  .library-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .library-toggle {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1185,6 +1379,24 @@ textarea {
   .button-row {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .repertoire-library {
+    padding: 12px;
+  }
+
+  .library-controls,
+  .chapter-summary,
+  .compact-line-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chapter-tab {
+    min-width: 116px;
   }
 
   .focus-controls {
